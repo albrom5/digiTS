@@ -1,0 +1,43 @@
+{% extends 'base_unregistered.html' %}
+
+{% block content %}
+    <div class="container-sm p-2 h-100 row align-items-center m-auto w-50">
+        <div class="card border-dark align-items-center p-5">
+            <form method="post" class="w-33">
+                {% csrf_token %}
+                <div class="row p-2 g-2">
+                       <div class="col-md fw-bold">
+                           <h1>Sistema de controle de contratos</h1>
+                       </div>
+                </div>
+                <div class="row p-2 g-2">
+                       <div class="col-md fw-bold">
+                           <h5>Faça login para ter acesso aos dados</h5>
+                       </div>
+                </div>
+                <div class="row p-2 g-2">
+                       <div class="col-md fw-bold">
+                           <p>Nome de usuário</p> {{ form.username }}
+                       </div>
+                </div>
+                <div class="row p-2 g-2">
+                       <div class="col-md fw-bold">
+                            <p>Senha</p> {{ form.password }}
+                       </div>
+                </div>
+                <div class="row p-2 g-2">
+                    <div class="col-md">
+                        {% if form.errors %}
+                            <p class="alert-danger">Nome de usuário e/ou senha incorretos.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row p-2 g-2">
+                    <div class="col-md">
+                        <button class="btn btn-outline-primary" type="submit">Entrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
