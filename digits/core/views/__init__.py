@@ -1,2 +1,2 @@
 from .risk_analysis import home
-from .users import CustomLoginView
+from .users import CustomLoginView, CustomPasswordChangeView

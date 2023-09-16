@@ -13,10 +13,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     TECHNICIAN = 'TEC'
 
     ROLES = (
-        (ENGINEER, 'engenheiro'),
-        (ADMINISTRATOR, 'administrador'),
-        (MANAGER, 'gerente'),
-        (TECHNICIAN, 'técnico'),
+        (ENGINEER, 'Engenheiro'),
+        (ADMINISTRATOR, 'Administrador'),
+        (MANAGER, 'Gerente'),
+        (TECHNICIAN, 'Técnico'),
     )
     email = models.EmailField('email', unique=True)
     first_name = models.CharField('nome', max_length=30, blank=True)
@@ -30,7 +30,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     has_changed_password = models.BooleanField(default=False)
-    companies = models.ManyToManyField('core.Company')
+    companies = models.ManyToManyField(
+        'core.Company', blank=True, verbose_name='Empresas'
+    )
+    selected_company = models.ForeignKey(
+        'core.Company', on_delete=models.SET_NULL, blank=True, null=True,
+        verbose_name='Empresa selecionada', related_name='selected_users'
+    )
     role = models.CharField('Cargo', max_length=3, choices=ROLES, blank=True)
 
     objects = UserManager()
@@ -65,6 +71,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Company(TimeStampedModel):
     name = models.CharField('nome', max_length=500)
     cnpj = models.CharField(max_length=18)
+
+    def __str__(self):
+        return f'{self.name} - {self.cnpj}'
 
     class Meta:
         verbose_name = 'empresa'

@@ -1,7 +1,12 @@
 from django.contrib import admin
-from digits.core.models import User
+from digits.core import models
 
-@admin.register(User)
-class User(admin.ModelAdmin):
-    list_display = ('email', 'first_name', 'last_name')    
+@admin.register(models.User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('email', 'first_name', 'last_name')
+
+
+@admin.register(models.Company)
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'cnpj')
 

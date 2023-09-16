@@ -16,7 +16,7 @@ class CustomLoginView(LoginView):
         return redirect('core:home')
     
 class CustomPasswordChangeView(PasswordChangeView):
-    success_url = reverse_lazy('core:list_items')
+    success_url = reverse_lazy('core:home')
 
     def form_valid(self, form):
         user = form.save(commit=False)
