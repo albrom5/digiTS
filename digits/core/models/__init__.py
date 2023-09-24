@@ -1,1 +1,2 @@
-from .models import User, Company
+from .user import User, Company
+from .documents import PreliminaryRiskAnalysis

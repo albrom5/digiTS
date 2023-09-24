@@ -11,4 +11,6 @@ urlpatterns = [
         'usuarios/trocar_senha/', views.CustomPasswordChangeView.as_view(),
         name='custom_password_change'
     ),
+    path('usuarios/<int:pk>/editar/', views.user_edit, name='user_edit'),
+    path('aprs/', views.apr_list, name='apr_list'),
 ]

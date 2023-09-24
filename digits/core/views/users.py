@@ -4,6 +4,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 
 
+def user_edit(request, pk):
+    context = {}
+    return render(request, 'core/user_form.html', context) 
+
+
 class CustomLoginView(LoginView):
 
     def form_valid(self, form):

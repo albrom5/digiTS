@@ -37,7 +37,8 @@
   <link id="pagestyle" href="{% static 'assets/css/argon-dashboard.css' %}?v=2.0.4" rel="stylesheet" />
 </head>
 
-<body class="">
+<body class="bg-gray-100">
+  <div class="min-height-300 bg-primary position-absolute w-100"></div>
   <div class="container position-sticky z-index-sticky top-0">
     <div class="row">
       <div class="col-12">
@@ -105,14 +106,11 @@
   <main class="main-content  mt-0">
     <section>
       <div class="page-header min-vh-100">
-        <div class="container">
-          <div class="row">
-            <div class="col-xl-12 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
+        <div class="container-fluid py-4">
               {% block content %}
 
               {% endblock content %}
-            </div>
-          </div>
+            
         </div>
       </div>
     </section>
