@@ -1,8 +1,10 @@
-from django.db import models
-from django.core.mail import send_mail
-from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+from django.core.mail import send_mail
+from django.db import models
+
 from digits.core.managers import UserManager
+
 from .abstract import TimeStampedModel
 
 
@@ -48,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         Retorna o nome completo do usuário
         '''
-        full_name = '%s %s' % (self.first_name, self.last_name)
+        full_name = f'{self.first_name} {self.last_name}'
         return full_name.strip()
 
     def get_short_name(self):
