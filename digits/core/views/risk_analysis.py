@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
-from digits.core.models import PreliminaryRiskAnalysis
+from django.shortcuts import get_object_or_404, redirect, render
+
+from digits.core import forms, models
 
 
 @login_required
@@ -12,10 +13,19 @@ def home(request):
 def apr_list(request):
     user = request.user
     company = user.selected_company
-    aprs = PreliminaryRiskAnalysis.objects.filter(
+    aprs = models.PreliminaryRiskAnalysis.objects.filter(
         company=company
     )
     context = {
         'apr_list': aprs
     }
     return render(request, 'core/apr_list.html', context)
+
+
+@login_required
+def apr_new(request):
+    form = forms.RiskAnalysisForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'core/apr_form_general.html', context)

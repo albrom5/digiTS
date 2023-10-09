@@ -3,8 +3,19 @@ from django.db import models
 
 
 class RiskQuestion(models.Model):
+    ACCIDENT = 'ACI'
+    BIOLOGICAL = 'BIO'
+    PHYSICAL = 'FIS'
+    CHEMICAL = 'QUI'
+    CATEGORIES = (
+        (ACCIDENT, 'Acidente'),
+        (BIOLOGICAL, 'Biológico'),
+        (PHYSICAL, 'Físico'),
+        (CHEMICAL, 'Químico')
+
+    )
     category = models.CharField(
-        'Categoria do Risco'
+        'Categoria do Risco', max_length=3, choices=CATEGORIES
     )
     order = models.PositiveSmallIntegerField('Ordem')
     description = models.CharField('Descrição', max_length=500)
@@ -65,12 +76,12 @@ class PreliminaryRiskAnalysis(models.Model):
     create_date = models.DateTimeField('Data de emissão', auto_now_add=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
-        verbose_name='Criado por'
+        verbose_name='Criado por', related_name='created_risk_analysis'
     )
     last_update = models.DateTimeField('Última atualização', auto_now_add=True)
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
-        verbose_name='Atualizado por'
+        verbose_name='Atualizado por', related_name='updated_risk_analysis'
     )
     activity_type = models.CharField(
         'Tipo de Atividade', max_length=500, blank=True

@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from digits.core import models
+
 
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
@@ -10,3 +12,9 @@ class UserAdmin(admin.ModelAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name', 'cnpj')
 
+
+@admin.register(models.RiskQuestion)
+class RiskQuestionAdmin(admin.ModelAdmin):
+    list_display = ('category', 'order', 'description')
+    list_filter = ('category',)
+    ordering = ('category', 'order')
