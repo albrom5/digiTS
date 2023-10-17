@@ -18,3 +18,14 @@ class RiskQuestionAdmin(admin.ModelAdmin):
     list_display = ('category', 'order', 'description')
     list_filter = ('category',)
     ordering = ('category', 'order')
+
+
+class RiskAnswerInline(admin.TabularInline):
+    model = models.RiskAnswer
+    extra = 0
+
+
+@admin.register(models.PreliminaryRiskAnalysis)
+class PreliminaryRiskQuestionAdmin(admin.ModelAdmin):
+    list_display = ('activity_type',)
+    inlines = [RiskAnswerInline,]

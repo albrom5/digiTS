@@ -13,4 +13,5 @@ urlpatterns = [
     ),
     path('usuarios/<int:pk>/editar/', views.user_edit, name='user_edit'),
     path('aprs/', views.apr_list, name='apr_list'),
+    path('apr/nova/', views.apr_new, name='apr_new'),
 ]

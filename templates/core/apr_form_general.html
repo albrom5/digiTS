@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <br>
+  <br>
+  <br>
+  <div class="card mb-4">
+    <div class="card-header pb-0">
+      <div class="d-flex align-items-center">
+      <p class="mb-0">Análise Preliminar de Riscos nas Atividades e Avaliação de Documentos</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="">
+        {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.activity_type|as_crispy_field }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.location|as_crispy_field }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.estimated_execution_time|as_crispy_field }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.work_permission|as_crispy_field }}
+          </div>
+        </div>
+      </div>
+      <hr class="horizontal dark">
+      <p class="text-uppercase text-sm">Identificação dos Riscos</p>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr class="bg-secondary">
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Riscos de Acidentes</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:10%">Sim/Não</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:25%">Quais?</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Forma(s) de controle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ accident_formset.management_form }}
+                {% for question in accident_formset %}
+                  <tr>
+                    <td>
+                      {{ question.question.label }}
+                    </td>
+                    <td>
+                      {{ question.exists|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.details|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.form_of_control|as_crispy_field }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr class="bg-secondary">
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Riscos Biológicos</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:10%">Sim/Não</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:25%">Quais?</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Forma(s) de controle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ biological_formset.management_form }}
+                {% for question in biological_formset %}
+                  <tr>
+                    <td>
+                      {{ question.question.label }}
+                    </td>
+                    <td>
+                      {{ question.exists|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.details|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.form_of_control|as_crispy_field }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr class="bg-secondary">
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Riscos Físicos</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:10%">Sim/Não</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:25%">Quais?</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Forma(s) de controle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ physical_formset.management_form }}
+                {% for question in physical_formset %}
+                  <tr>
+                    <td>
+                      {{ question.question.label }}
+                    </td>
+                    <td>
+                      {{ question.exists|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.details|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.form_of_control|as_crispy_field }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table">
+            <table class="table align-items-center">
+              <thead>
+                <tr class="bg-secondary">
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Riscos Químicos</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:10%">Sim/Não</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:25%">Quais?</th>
+                  <th class="text-uppercase text-white font-weight-bolder" style="width:30%">Forma(s) de controle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ chemical_formset.management_form }}
+                {% for question in chemical_formset %}
+                  <tr>
+                    <td>
+                      {{ question.question.label }}
+                    </td>
+                    <td>
+                      {{ question.exists|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.details|as_crispy_field }}
+                    </td>
+                    <td>
+                      {{ question.form_of_control|as_crispy_field }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> 
+          <button type="submit" class="btn btn-primary">
+            Salvar
+          </button>
+          <a class="btn btn-default" href="{% url 'core:apr_list' %}">Voltar</a>
+        </div>
+      </div>  
+    </form>
+    </div>
+  </div>
+{% endblock %}

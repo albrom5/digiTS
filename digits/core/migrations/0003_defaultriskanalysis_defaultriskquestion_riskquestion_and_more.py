@@ -178,6 +178,7 @@ risk_questions = [
     },
 ]
 
+
 def create_questions(apps, schema_editor):
     RiskQuestion = apps.get_model('core', 'RiskQuestion')
     for risk in risk_questions:

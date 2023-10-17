@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
-from decouple import config, Csv
-from dj_database_url import parse as dburl
 import os
+from pathlib import Path
+
+from decouple import Csv, config
+from dj_database_url import parse as dburl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'digits.core',
 ]
 
@@ -132,3 +135,6 @@ AUTH_USER_MODEL = 'core.User'
 
 LOGIN_URL = 'core:custom_login'
 LOGOUT_REDIRECT_URL = 'core:custom_login'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
