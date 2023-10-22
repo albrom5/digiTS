@@ -14,4 +14,6 @@ urlpatterns = [
     path('usuarios/<int:pk>/editar/', views.user_edit, name='user_edit'),
     path('aprs/', views.apr_list, name='apr_list'),
     path('apr/nova/', views.apr_new, name='apr_new'),
+    path('apr/<int:pk>', views.apr_detail, name='apr_detail'),
+    path('apr/<int:pk>/pdf/', views.APRDetailPDF.as_view(), name='apr_detail_pdf'),
 ]

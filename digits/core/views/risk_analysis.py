@@ -1,15 +1,19 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.decorators import method_decorator
+from django_weasyprint import WeasyTemplateView
 
 from digits.core import forms, models
 
 
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    aprs_qty = models.PreliminaryRiskAnalysis.objects.all().count()
+    return render(request, 'home.html', {'aprs_qty': aprs_qty})
 
 
 @login_required
@@ -61,7 +65,7 @@ def apr_new(request):
     )
 
     chemical_risk_questions = models.DefaultRiskQuestion.objects.filter(
-        default_risk_analysis__id=1, 
+        default_risk_analysis__id=1,
         risk_question__category=models.RiskQuestion.CHEMICAL
     )
     ChemicalQuestionsFormSet = inlineformset_factory(
@@ -76,18 +80,22 @@ def apr_new(request):
         accident_questions_formset = AccidentQuestionsFormSet(
             request.POST,
             initial=[{'question': rq.id} for rq in accident_risk_questions],
+            prefix='accident'
         )
         biological_questions_formset = BiologicalQuestionsFormSet(
             request.POST,
             initial=[{'question': rq.id} for rq in biological_risk_questions],
+            prefix='biological'
         )
         physical_questions_formset = PhysicalQuestionsFormSet(
             request.POST,
             initial=[{'question': rq.id} for rq in physical_risk_questions],
+            prefix='physical'
         )
         chemical_questions_formset = ChemicalQuestionsFormSet(
             request.POST,
             initial=[{'question': rq.id} for rq in chemical_risk_questions],
+            prefix='chemical'
         )
         try:
             with transaction.atomic():
@@ -106,7 +114,7 @@ def apr_new(request):
                         accident_questions_formset.save()
                     else:
                         valid = False
-                    
+
                     biological_questions_formset.instance = apr
                     if biological_questions_formset.is_valid():
                         biological_questions_formset.save()
@@ -142,15 +150,19 @@ def apr_new(request):
     form = forms.RiskAnalysisForm()
     accident_questions_formset = AccidentQuestionsFormSet(
         initial=[{'question': rq.id} for rq in accident_risk_questions],
+        prefix='accident'
     )
     biological_questions_formset = BiologicalQuestionsFormSet(
         initial=[{'question': rq.id} for rq in biological_risk_questions],
+        prefix='biological'
     )
     physical_questions_formset = PhysicalQuestionsFormSet(
         initial=[{'question': rq.id} for rq in physical_risk_questions],
+        prefix='physical'
     )
     chemical_questions_formset = ChemicalQuestionsFormSet(
         initial=[{'question': rq.id} for rq in chemical_risk_questions],
+        prefix='chemical'
     )
 
     context = {
@@ -161,3 +173,92 @@ def apr_new(request):
         'chemical_formset': chemical_questions_formset,
     }
     return render(request, 'core/apr_form_general.html', context)
+
+
+@login_required
+def apr_detail(request, pk):
+    user = request.user
+    company = user.selected_company
+    apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
+    accident_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.ACCIDENT
+    )
+    biological_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.BIOLOGICAL
+    )
+    physical_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.PHYSICAL
+    )
+    chemical_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.CHEMICAL
+    )
+    context = {
+        'apr': apr,
+        'accident_risks': accident_risks,
+        'biological_risks': biological_risks,
+        'physical_risks': physical_risks,
+        'chemical_risks': chemical_risks
+    }
+    return render(request, 'core/apr_detail.html', context)
+
+
+@login_required
+def apr_detail_pdf(request, pk):
+    user = request.user
+    company = user.selected_company
+    apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
+    accident_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.ACCIDENT
+    )
+    biological_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.BIOLOGICAL
+    )
+    physical_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.PHYSICAL
+    )
+    chemical_risks = apr.answers.filter(
+        question__risk_question__category=models.RiskQuestion.CHEMICAL
+    )
+    context = {
+        'apr': apr,
+        'accident_risks': accident_risks,
+        'biological_risks': biological_risks,
+        'physical_risks': physical_risks,
+        'chemical_risks': chemical_risks
+    }
+    return render(request, 'core/apr_detail.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class APRDetailPDF(WeasyTemplateView):
+    # pdf_stylesheets = [
+    #     settings.STATIC_ROOT + '/bootstrap/css/bootstrap.min.css',
+    #     settings.STATIC_ROOT + '/css/pdfFiles.css',
+    # ]
+    template_name = 'core/apr_detail_pdf.html'
+    pdf_attachment = True
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
+        accident_risks = apr.answers.filter(
+            question__risk_question__category=models.RiskQuestion.ACCIDENT
+        )
+        biological_risks = apr.answers.filter(
+            question__risk_question__category=models.RiskQuestion.BIOLOGICAL
+        )
+        physical_risks = apr.answers.filter(
+            question__risk_question__category=models.RiskQuestion.PHYSICAL
+        )
+        chemical_risks = apr.answers.filter(
+            question__risk_question__category=models.RiskQuestion.CHEMICAL
+        )
+        context = self.get_context_data(**kwargs)
+        context.update({
+            'apr': apr,
+            'accident_risks': accident_risks,
+            'biological_risks': biological_risks,
+            'physical_risks': physical_risks,
+            'chemical_risks': chemical_risks
+        })
+        return self.render_to_response(context)

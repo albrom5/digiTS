@@ -1,0 +1,19 @@
+@page {
+    margin-top: 2cm;
+    background-size: 200px 80px;
+    background-position: -50px -110px;
+    background-color: white;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    font-size: 8pt;
+    padding:3px;
+}
+body, h1, h2, h3, h4, h5, p, span {            
+    font-family: 'Calibri';
+}
+body, div, span, p {
+    font-size: 8pt
+}
+.over-text {
+    font-size: 10pt
+}

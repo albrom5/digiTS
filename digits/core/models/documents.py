@@ -23,11 +23,11 @@ class RiskQuestion(models.Model):
 
     def __str__(self):
         return f'{self.order} - {self.description}'
-    
+
     class Meta:
         verbose_name = 'Questâo de Risco'
         verbose_name_plural = 'Questões de Risco'
-        
+
 
 class DefaultRiskAnalysis(models.Model):
     description = models.CharField('Descrição', max_length=500)
@@ -35,7 +35,7 @@ class DefaultRiskAnalysis(models.Model):
 
     def __str__(self):
         return self.description
-    
+
     class Meta:
         verbose_name = 'Análise de Risco Padrão'
         verbose_name_plural = 'Análises de Risco Padrão'
@@ -47,13 +47,13 @@ class DefaultRiskQuestion(models.Model):
         verbose_name='Análise de Risco Padrão'
     )
     risk_question = models.ForeignKey(
-        'core.RiskQuestion', on_delete=models.CASCADE, 
+        'core.RiskQuestion', on_delete=models.CASCADE,
         verbose_name='Questão de Risco'
     )
 
     def __str__(self):
         return f'{self.risk_question.order} - {self.risk_question.description}'
-    
+
     class Meta:
         verbose_name = 'Questão da Análise de Risco Padrão'
         verbose_name_plural = 'Questões da Análise de Risco Padrão'
@@ -125,7 +125,7 @@ class RiskAnswer(models.Model):
 
     def __str__(self):
         exists = 'Sim' if self.exists else 'Não'
-        title =  (
+        title = (
             f'{self.question.risk_question.order} - '
             f'{self.question.risk_question.description}: {exists}'
         )
@@ -161,7 +161,7 @@ class RiskAnalysisSignature(models.Model):
             f'{self.signatory.get_full_name()}'
         )
         if self.signature_date_time is not None:
-            f'{title} - {self.signature_date_time.strftime("%d/%m%Y %H:%M:%S")}'
+            f'{title}-{self.signature_date_time.strftime("%d/%m%Y %H:%M:%S")}'
         return title
 
     class Meta:

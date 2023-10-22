@@ -1,0 +1,263 @@
+{% load static %}
+<html>
+
+<head>
+  <title>Análise Preliminar de Riscos nas Atividades e Avaliação de Documentos</title>
+  <link id="pagestyle" href="{% static 'assets/css/argon-dashboard.css' %}?v=2.0.4" rel="stylesheet" />
+  <!-- PDF files sheet -->
+  <link rel="stylesheet" href="{% static 'assets/css/pdf_files.css' %}">
+  <style>
+    @page {
+      size: A4 portrait;
+
+      @bottom-right {
+        content: "Página "counter(page) " de "counter(pages);
+        font-size: 8pt;
+        font-family: 'Calibri';
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="content">
+    <div class="row clearfix">
+      <div class="card mb-4">
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Análise Preliminar de Riscos nas Atividades e Avaliação de Documentos</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Tipo de Atividade: {{ apr.activity_type }}</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Local: {{ apr.location }}</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Tempo previsto de execução: {{ apr.estimated_execution_time }}</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Permissão de trabalho / acompanhamento de Técnico de Segurança do Trabalho da contratada: {{ apr.work_permission }}</td>
+                </tr>
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Identificação dos Riscos</td>
+                </tr>
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr class="text-center text-bold">
+                  <td style="width: 15%;">Riscos de Acidentes</td>
+                  <td class="text-center" style="width: 5%;">Sim</td>
+                  <td class="text-center" style="width: 5%;">Não</td>
+                  <td style="width: 35%;">Qual(is)</td>
+                  <td style="width: 40%;">Forma(s) de controle</td>
+                </tr>
+                {% for risk in accident_risks.all %}
+                  <tr>
+                    <td>
+                      {{ risk.question }}
+                    </td>
+                    {% if risk.exists %} 
+                      <td class="text-center">X</td><td class="text-center"></td>
+                    {% else %}
+                      <td class="text-center"></td><td class="text-center">X</td>
+                    {% endif %}
+                    <td>
+                      {{ risk.details }}
+                    </td>
+                    <td>
+                      {{ risk.form_of_control }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr class="text-center text-bold">
+                  <td>Riscos Biológicos</td>
+                  <td>Sim</td>
+                  <td>Não</td>
+                  <td>Qual(is)</td>
+                  <td>Forma(s) de controle</td>
+                </tr>
+                {% for risk in biological_risks.all %}
+                  <tr>
+                    <td>
+                      {{ risk.question }}
+                    </td>
+                    {% if risk.exists %} 
+                      <td class="text-center">X</td><td class="text-center"></td>
+                    {% else %}
+                      <td class="text-center"></td><td class="text-center">X</td>
+                    {% endif %}
+                    <td>
+                      {{ risk.details }}
+                    </td>
+                    <td>
+                      {{ risk.form_of_control }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr class="text-center text-bold">
+                  <td>Riscos Físicos</td>
+                  <td>Sim</td>
+                  <td>Não</td>
+                  <td>Qual(is)</td>
+                  <td>Forma(s) de controle</td>
+                </tr>
+                {% for risk in physical_risks.all %}
+                  <tr>
+                    <td>
+                      {{ risk.question }}
+                    </td>
+                    {% if risk.exists %} 
+                      <td class="text-center">X</td><td class="text-center"></td>
+                    {% else %}
+                      <td class="text-center"></td><td class="text-center">X</td>
+                    {% endif %}
+                    <td>
+                      {{ risk.details }}
+                    </td>
+                    <td>
+                      {{ risk.form_of_control }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr class="text-center text-bold">
+                  <td>Riscos Químicos</td>
+                  <td>Sim</td>
+                  <td>Não</td>
+                  <td>Qual(is)</td>
+                  <td>Forma(s) de controle</td>
+                </tr>
+                {% for risk in chemical_risks.all %}
+                  <tr>
+                    <td>
+                      {{ risk.question }}
+                    </td>
+                    {% if risk.exists %} 
+                      <td class="text-center">X</td><td class="text-center"></td>
+                    {% else %}
+                      <td class="text-center"></td><td class="text-center">X</td>
+                    {% endif %}
+                    <td>
+                      {{ risk.details }}
+                    </td>
+                    <td>
+                      {{ risk.form_of_control }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Recomendações de segurança do trabalho</td>
+                </tr>
+                <tr>
+                  <td colspan="5">1ª Tenha atenção durante o trabalho</td>
+                </tr>
+                <tr>
+                  <td colspan="5">2ª Não utilize o telefone celular ou fone de ouvido enquanto estiver executando a atividade</td>
+                </tr>
+                <tr>
+                  <td colspan="5">3ª Em caso de princípio de incêndio na Novartis, utilize os acionadores manuais</td>
+                </tr>
+                <tr>
+                  <td colspan="5">4ª Em caso de emergência médica acione a Saúde Ocupacional fone:</td>
+                </tr>
+                <tr>
+                  <td colspan="5">5ª Mantenha o canteiro de trabalho limpo, organizado e sinalizado</td>
+                </tr>
+                <tr>
+                  <td colspan="5">6ª Sempre que necessário, faça uso dos Equipamentos de Proteção Individual - EPIs</td>
+                </tr>
+                <tr>
+                  <td colspan="5">7ª Sempre que necessário, faça uso dos Equipamentos de Proteção Coletiva - EPCs</td>
+                </tr>
+                <tr>
+                  <td colspan="5">8ª Mantenha a postura adequada enquanto estiver realizando a atividade e no transporte manual de cargas</td>
+                </tr>
+                <tr>
+                  <td colspan="5">9ª Participe de treinamentos oferecidos pela área de HSE (Integração, Análise de Riscos, etc)</td>
+                </tr>
+                <tr>
+                  <td colspan="5">10ª Cumpra as regras e procedimentos de Segurança do Trabalho do local da atividade</td>
+                </tr>
+                <tr>
+                  <td colspan="5">11ª Em caso de acidente de trabalho ou trajeto, informe imediatamente seu gestor, o Ambulatório Médico e o HSE</td>
+                </tr>
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Informações de emergência</td>
+                </tr>
+                <tr>
+                  <td colspan="5">1ª Preencher nome e telefone do responsável da empresa contratada no canteiro de trabalho:</td>
+                </tr>
+                <tr>
+                  <td colspan="5">2ª Hospital Público - Santa Casa de Misericórdia de Santo Amaro. Rua Isabel Schimidt, 59, Santo Amaro, fone: 11 5687-4322</td>
+                </tr>
+                <tr>
+                  <td colspan="5">3ª SAMU: 192</td>
+                </tr>
+                <tr>
+                  <td colspan="5">4ª Bombeiros: 193</td>
+                </tr>
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Documentos a Serem Apresentados Pela Contratada Antes da Assinatura do Contrato</td>
+                </tr>
+                <tr>
+                  <td colspan="5">1) PCMSO</td>
+                </tr>
+                <tr>
+                  <td colspan="5">2) PGR</td>
+                </tr>
+                <tr>
+                  <td colspan="5">3) APR da atividade preenchida com a assinatura dos envolvidos na atividade</td>
+                </tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Documentos a Serem Apresentados Pela Contratada Antes do Início das Atividades</td>
+                </tr>
+                <tr>
+                  <td colspan="5">1) Cópia de ficha de registro ou cópia da carteira de trabalho nas páginas principais (foto e registro)</td>
+                </tr>
+                <tr>
+                  <td colspan="5">2) Atestado de saúde ocupacional considerando os riscos de exposição.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">3) Ficha de entrega e recebimento de EPI.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">4) Certificado de treinamento para uso de produtos químicos perigosos.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">5) Ordem de serviço conforme NR 01.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">6) Plano de atendimento a Emergência.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">7) FISPQ dos produtos utilizados.</td>
+                </tr>
+                <tr>
+                  <td colspan="5">8) Treinamento de capacitação relacionado a atividade</td>
+                </tr>
+                <tr class="table-dark"><td colspan="5"></td></tr>
+                <tr>
+                  <td class="text-center text-bold" colspan="5">Validação</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Avaliação realizada por:</td>
+                </tr>
+                <tr>
+                  <td colspan="5">Responsável pela contratação:</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

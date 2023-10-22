@@ -12,18 +12,22 @@
         <table class="table align-items-center mb-0">
           <thead>
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Descrição</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Data de emissão</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipo de Atividade</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Data de criação</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
             </tr>
           </thead>
           <tbody>
             {% for apr in apr_list.all %}
               <tr>
                 <td>
-                  {{ apr.description }}
+                  <a href="{% url 'core:apr_detail' apr.id %}">{{ apr.activity_type }}</a>
                 </td>
                 <td>
-                  {{ apr.create_date }}
+                  {{ apr.create_date|date:"SHORT_DATE_FORMAT" }}
+                </td>
+                <td>
+                  {{ apr.get_status_display }}
                 </td>
               </tr>
             {% endfor %}
