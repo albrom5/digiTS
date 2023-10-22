@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+<div class="modal fade" id="sign-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <div class="card card-plain">
+          <div class="card-header pb-0 text-left">
+            <p class="mb-0">Insira suas credenciais para assinar o documento.</p>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="{% url 'core:apr_sign' apr.id %}">
+              {% csrf_token %}
+              {{ sign_form|crispy }}
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary">Assinar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import authenticate
 
 from digits.core import models
 
@@ -92,3 +93,25 @@ class RiskAnswerForm(forms.ModelForm):
         fields = [
             'question', 'exists', 'details', 'form_of_control'
         ]
+
+
+class SignForm(forms.Form):
+    username = forms.EmailField(
+        widget=forms.EmailInput(attrs={"autofocus": True})
+    )
+    password = forms.CharField(
+        label='Senha',
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
+    def clean(self):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+
+        if username is not None and password:
+            user = authenticate(
+                username=username, password=password
+            )
+            if user is None:
+                raise forms.ValidationError('Credenciais incorretas')

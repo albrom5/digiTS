@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.forms import inlineformset_factory
@@ -192,41 +193,29 @@ def apr_detail(request, pk):
     chemical_risks = apr.answers.filter(
         question__risk_question__category=models.RiskQuestion.CHEMICAL
     )
+    sign_form = AuthenticationForm()
     context = {
         'apr': apr,
         'accident_risks': accident_risks,
         'biological_risks': biological_risks,
         'physical_risks': physical_risks,
-        'chemical_risks': chemical_risks
+        'chemical_risks': chemical_risks,
+        'sign_form': sign_form
     }
     return render(request, 'core/apr_detail.html', context)
 
 
 @login_required
-def apr_detail_pdf(request, pk):
+def apr_sign(request, pk):
     user = request.user
     company = user.selected_company
     apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
-    accident_risks = apr.answers.filter(
-        question__risk_question__category=models.RiskQuestion.ACCIDENT
-    )
-    biological_risks = apr.answers.filter(
-        question__risk_question__category=models.RiskQuestion.BIOLOGICAL
-    )
-    physical_risks = apr.answers.filter(
-        question__risk_question__category=models.RiskQuestion.PHYSICAL
-    )
-    chemical_risks = apr.answers.filter(
-        question__risk_question__category=models.RiskQuestion.CHEMICAL
-    )
-    context = {
-        'apr': apr,
-        'accident_risks': accident_risks,
-        'biological_risks': biological_risks,
-        'physical_risks': physical_risks,
-        'chemical_risks': chemical_risks
-    }
-    return render(request, 'core/apr_detail.html', context)
+    sign_form = forms.SignForm(request.POST)
+    if sign_form.is_valid():
+        print('OK')
+    return redirect('core:apr_detail', pk=apr.id)
+    
+    
 
 
 @method_decorator(login_required, name='dispatch')
@@ -237,6 +226,7 @@ class APRDetailPDF(WeasyTemplateView):
     # ]
     template_name = 'core/apr_detail_pdf.html'
     pdf_attachment = True
+    pdf_filename = 'apr.pdf'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
