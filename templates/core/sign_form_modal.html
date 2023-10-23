@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<div class="modal fade" id="sign-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+<div class="modal fade" id="modal_sign_form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md" role="document">
     <div class="modal-content">
       <div class="modal-body p-0">
@@ -8,9 +8,10 @@
             <p class="mb-0">Insira suas credenciais para assinar o documento.</p>
           </div>
           <div class="card-body">
-            <form method="POST" action="{% url 'core:apr_sign' apr.id %}">
+            <form method="POST" id="id_sign_form">
               {% csrf_token %}
               {{ sign_form|crispy }}
+              <span id="form_errors" class="text-danger"></span>
               <div class="text-center">
                 <button type="submit" class="btn btn-primary">Assinar</button>
               </div>
@@ -21,3 +22,48 @@
     </div>
   </div>
 </div>
+{% block extrascript %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">   
+  $('#id_sign_form').submit(function () {
+    console.log('submit')
+    validateSign();
+    return false;
+  });
+
+  function validateSign() {    
+    var request_url = "{% url 'core:apr_sign' apr.id %}";
+    var formData = {
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      username: $("#id_username").val(),
+      password: $("#id_password").val(),
+    };
+    
+    $.ajax({
+      url: request_url,
+      method: 'POST',
+      dataType: 'json',
+      data: formData,
+      success: function(data){
+        if (data['errors']) {
+          $.each(data['errors'], function(key,value) {
+            console.log(key)
+            console.log(value)
+            $("#form_errors").text(value);
+          });    
+          return
+        };
+        console.log('Assinou')
+        $("#modal_sign_form").modal("hide");
+        $("#id_username").val("");
+        $("#id_password").val("");
+        var apr_url = "{% url 'core:apr_detail' apr.id %}"
+        window.location = apr_url;
+      }, 
+      errors: function(e) {
+        alert(e);
+      }
+    })
+  }
+</script>
+{% endblock extrascript %}

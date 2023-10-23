@@ -1,7 +1,25 @@
 from django import forms
 from django.contrib.auth import authenticate
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from digits.core import models
+
+
+class UserChangeForm(forms.ModelForm):
+    """A form for updating users. Includes all the fields on
+    the user, but replaces the password field with admin's
+    password hash display field.
+    """
+    password = ReadOnlyPasswordHashField(
+        help_text=("Raw passwords are not stored, so there is no way to see "
+                    "this user's password, but you can change the password "
+                    "using <a href=\"../password/\">this form</a>.")
+    )
+
+    class Meta:
+        model = models.User
+        fields = ['first_name', 'last_name', 'email', 'is_active', 'is_staff',
+            'companies', 'selected_company', 'role', 'password']
 
 
 class RiskAnalysisForm(forms.ModelForm):
@@ -105,6 +123,11 @@ class SignForm(forms.Form):
         widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
     )
 
+    def __init__(self, *args, **kwargs):
+        if 'user' in kwargs:
+            self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
     def clean(self):
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
@@ -113,5 +136,5 @@ class SignForm(forms.Form):
             user = authenticate(
                 username=username, password=password
             )
-            if user is None:
+            if user is None or user != self.user:
                 raise forms.ValidationError('Credenciais incorretas')

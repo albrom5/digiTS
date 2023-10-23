@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.forms import inlineformset_factory
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django_weasyprint import WeasyTemplateView
@@ -194,13 +198,17 @@ def apr_detail(request, pk):
         question__risk_question__category=models.RiskQuestion.CHEMICAL
     )
     sign_form = AuthenticationForm()
+    evaluation_signature = apr.signatures.filter(
+        signature_type=models.RiskAnalysisSignature.EVALUATOR
+    ).order_by('id').first()
     context = {
         'apr': apr,
         'accident_risks': accident_risks,
         'biological_risks': biological_risks,
         'physical_risks': physical_risks,
         'chemical_risks': chemical_risks,
-        'sign_form': sign_form
+        'sign_form': sign_form,
+        'evaluation_signature': evaluation_signature,
     }
     return render(request, 'core/apr_detail.html', context)
 
@@ -210,12 +218,35 @@ def apr_sign(request, pk):
     user = request.user
     company = user.selected_company
     apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
-    sign_form = forms.SignForm(request.POST)
+    signature_type = None
+    if user.role == models.User.TECHNICIAN:
+        signature_type = models.RiskAnalysisSignature.EVALUATOR
+    elif user.role == models.User.MANAGER:
+        signature_type = models.RiskAnalysisSignature.CONTRACT_RESPONSIBLE
+
+    if signature_type is None:
+        data = {
+            'errors': ['Cargo do usuário não permite assinar este tipo de documento.']
+        }
+        return JsonResponse(data)
+    sign_form = forms.SignForm(request.POST, user=user)
     if sign_form.is_valid():
-        print('OK')
-    return redirect('core:apr_detail', pk=apr.id)
-    
-    
+        signature = models.RiskAnalysisSignature(
+            preliminary_risk_analysis=apr,
+            signature_type=signature_type,
+            signatory=user,
+            signature_date_time=datetime.now()
+        )
+        signature.save()
+        data = {
+            'signature': signature.signatory.full_name
+        }
+        messages.success(request, 'APR assinada')
+        return JsonResponse(data)
+    data = {
+        'errors': sign_form.errors
+    }
+    return JsonResponse(data)
 
 
 @method_decorator(login_required, name='dispatch')

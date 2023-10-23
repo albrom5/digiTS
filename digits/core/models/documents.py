@@ -157,7 +157,7 @@ class RiskAnalysisSignature(models.Model):
 
     def __str__(self):
         title = (
-            f'{self.preliminary_risk_analysis} - {self.get_sinature_type()} - '
+            f'{self.preliminary_risk_analysis} - {self.get_signature_type_display()} - '
             f'{self.signatory.get_full_name()}'
         )
         if self.signature_date_time is not None:

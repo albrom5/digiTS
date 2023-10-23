@@ -35,6 +35,7 @@
   <link href="{% static 'assets/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'assets/css/argon-dashboard.css' %}?v=2.0.4" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 </head>
 
 <body class="bg-gray-100">
@@ -82,12 +83,12 @@
                     <i class="ni ni-settings opacity-6 text-dark me-1"></i>
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                      <li>
+                      {% comment %} <li>
                         <a class="dropdown-item" href="../pages/profile.html">
                           <i class="fa fa-user opacity-6 text-dark me-1"></i>
                           Perfil
                         </a>
-                      </li>
+                      </li> {% endcomment %}
                       <li>
                         <a class="dropdown-item" href="{% url 'logout' %}">
                           <i class="fas fa-door-open opacity-6 text-dark me-1"></i>
@@ -107,10 +108,8 @@
     <section>
       <div class="page-header min-vh-100">
         <div class="container-fluid py-4">
-              {% block content %}
-
-              {% endblock content %}
-            
+          {% block content %}
+          {% endblock content %}
         </div>
       </div>
     </section>
@@ -133,6 +132,65 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'assets/js/argon-dashboard.min.js' %}?v=2.0.4"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+  <script>
+    // JQuery-Confirm for success/failure messages
+    // {% if messages %}
+    let content_message = '';
+    let title = 'Mensagem';
+    let color = 'blue';
+    let icon = 'fa fa-info';
+    let level = null;
+    // {% for message in messages %}
+    content_message += '<p>{{ message }}</p>'
+    level = '{{ message.level }}'
+    // {% endfor %}
+    // {% if messages|length > 1 %}
+    title = 'Mensagens';
+    icon = 'fa fa-comment-dots';
+    // {% else %}
+    msg = {
+      '{{ DEFAULT_MESSAGE_LEVELS.SUCCESS }}': {
+        title: 'Sucesso',
+        color: 'green',
+        icon: 'fa fa-check-square'
+      },
+      '{{ DEFAULT_MESSAGE_LEVELS.WARNING }}': {
+        title: 'Alerta',
+        color: 'orange',
+        icon: 'fa fa-warning',
+      },
+      '{{ DEFAULT_MESSAGE_LEVELS.ERROR }}': {
+        title: 'Erro',
+        color: 'red',
+        icon: 'fa fa-warning',
+      }
+    }
+    title = msg[level].title
+    color = msg[level].color
+    icon = msg[level].icon
+    // {% endif %}
+    var a = $.alert({
+      backgroundDismiss: true,
+      title: title,
+      content: content_message,
+      icon: icon,
+      lazyOpen: true,
+      type: color,
+      theme: 'light',
+      buttons: {
+        close: {
+          text: 'Fechar',
+          btnClass: `btn-${color}`,
+          keys: ['esc'],
+        }
+      },
+    })
+    setTimeout(function () { a.open() }, 700)
+    // {% endif %}
+  </script>
+  {% block extrascript %}{% endblock extrascript %}
 </body>
 
 </html>
