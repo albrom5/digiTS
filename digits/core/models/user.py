@@ -15,11 +15,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     TECHNICIAN = 'TEC'
 
     ROLES = (
-        (ENGINEER, 'Engenheiro'),
+        (ENGINEER, 'Engenheiro de Segurança do Trabalho'),
         (ADMINISTRATOR, 'Administrador'),
         (MANAGER, 'Gerente'),
-        (TECHNICIAN, 'Técnico'),
+        (TECHNICIAN, 'Técnico de Segurança do Trabalho'),
     )
+
+    EVALUATOR_ROLES = [ENGINEER, TECHNICIAN]
+    RESPONSIBLE_ROLES = [MANAGER]
+
     email = models.EmailField('email', unique=True)
     first_name = models.CharField('nome', max_length=30, blank=True)
     last_name = models.CharField('sobrenome', max_length=60, blank=True)

@@ -42,12 +42,21 @@ class RiskAnalysisForm(forms.ModelForm):
         ),
         required=True
     )
+    company_responsible_name = forms.CharField(
+        label='Nome do responsável da empresa no canteiro de trabalho',
+        required=True
+    )
+    company_responsible_phone = forms.CharField(
+        label='Telefone do responsável da empresa no canteiro de trabalho',
+        required=True
+    )
 
     class Meta:
         model = models.PreliminaryRiskAnalysis
         fields = [
             'activity_type', 'location', 'estimated_execution_time',
-            'work_permission'
+            'work_permission', 'company_responsible_name',
+            'company_responsible_phone'
         ]
 
 
@@ -109,7 +118,7 @@ class RiskAnswerForm(forms.ModelForm):
     class Meta:
         model = models.RiskAnswer
         fields = [
-            'question', 'exists', 'details', 'form_of_control'
+            'question', 'exists', 'details', 'form_of_control',
         ]
 
 

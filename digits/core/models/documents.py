@@ -95,6 +95,38 @@ class PreliminaryRiskAnalysis(models.Model):
         'Trabalho da contratada', max_length=250, blank=True
     )
     status = models.CharField('Situação', max_length=3, choices=STATUS)
+    company_responsible_name = models.CharField(
+        'Nome do responsável da empresa no canteiro de trabalho',
+        max_length=250, blank=True
+    )
+    company_responsible_phone = models.CharField(
+        'Telefone do responsável da empresa no canteiro de trabalho',
+        max_length=20, blank=True
+    )
+
+    def user_can_sign(self, user):
+        from digits.core.models.user import User
+        allowed_roles = [
+            User.TECHNICIAN, User.MANAGER, User.ENGINEER
+        ]
+        if user.role not in allowed_roles:
+            return (False, 'Cargo do usuário não permite assinar este tipo de documento.')
+
+        signature_type = None
+        if user.role in User.EVALUATOR_ROLES:
+            signature_type = RiskAnalysisSignature.EVALUATOR
+        elif user.role in User.RESPONSIBLE_ROLES:
+            signature_type = RiskAnalysisSignature.CONTRACT_RESPONSIBLE
+
+        is_signed = self.signatures.filter(
+                signature_type=signature_type
+        ).exists()
+        if is_signed:
+            signature_types_dict = dict(RiskAnalysisSignature.TYPES)
+            error_message = f'Documento já assinado pelo {signature_types_dict[signature_type]}.'
+            return (False, error_message)
+
+        return (True, 'OK')
 
     def __str__(self):
         title = (
@@ -133,6 +165,8 @@ class RiskAnswer(models.Model):
 
 
 class RiskAnalysisSignature(models.Model):
+    from digits.core.models.user import User
+
     EVALUATOR = 'AVA'
     CONTRACT_RESPONSIBLE = 'RES'
     TYPES = (
@@ -149,6 +183,9 @@ class RiskAnalysisSignature(models.Model):
     signatory = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         verbose_name='Criado por'
+    )
+    signatory_role = models.CharField(
+        'Cargo do Signatário', max_length=3, choices=User.ROLES
     )
     signature_date_time = models.DateTimeField(
         'Data de assinatura', blank=True, null=True

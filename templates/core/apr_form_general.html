@@ -8,7 +8,7 @@
   <div class="card mb-4">
     <div class="card-header pb-0">
       <div class="d-flex align-items-center">
-      <p class="mb-0">Análise Preliminar de Riscos nas Atividades e Avaliação de Documentos</p>
+      <h3 class="mb-0 text-center text-uppercase">Análise Preliminar de Riscos nas Atividades e Avaliação de Documentos</h3>
       </div>
     </div>
     <div class="card-body">
@@ -36,8 +36,20 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.company_responsible_name|as_crispy_field }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            {{ form.company_responsible_phone|as_crispy_field }}
+          </div>
+        </div>
+      </div>  
       <hr class="horizontal dark">
-      <p class="text-uppercase text-sm">Identificação dos Riscos</p>
+      <h4 class="text-uppercase text-sm text-center font-weight-bolder">Identificação dos Riscos</h4>
       <div class="row">
         <div class="col-md-12">
           <div class="table">

@@ -201,6 +201,9 @@ def apr_detail(request, pk):
     evaluation_signature = apr.signatures.filter(
         signature_type=models.RiskAnalysisSignature.EVALUATOR
     ).order_by('id').first()
+    responsible_signature = apr.signatures.filter(
+        signature_type=models.RiskAnalysisSignature.CONTRACT_RESPONSIBLE
+    ).order_by('id').first()
     context = {
         'apr': apr,
         'accident_risks': accident_risks,
@@ -209,6 +212,8 @@ def apr_detail(request, pk):
         'chemical_risks': chemical_risks,
         'sign_form': sign_form,
         'evaluation_signature': evaluation_signature,
+        'responsible_signature': responsible_signature,
+        'user_can_sign': apr.user_can_sign(user)[0]
     }
     return render(request, 'core/apr_detail.html', context)
 
@@ -219,29 +224,32 @@ def apr_sign(request, pk):
     company = user.selected_company
     apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
     signature_type = None
-    if user.role == models.User.TECHNICIAN:
+    if user.role in models.User.EVALUATOR_ROLES:
         signature_type = models.RiskAnalysisSignature.EVALUATOR
-    elif user.role == models.User.MANAGER:
+    elif user.role in models.User.RESPONSIBLE_ROLES:
         signature_type = models.RiskAnalysisSignature.CONTRACT_RESPONSIBLE
 
-    if signature_type is None:
+    user_can_sign, message = apr.user_can_sign(user)
+    if not user_can_sign:
         data = {
-            'errors': ['Cargo do usuário não permite assinar este tipo de documento.']
+            'errors': [message]
         }
         return JsonResponse(data)
+
     sign_form = forms.SignForm(request.POST, user=user)
     if sign_form.is_valid():
         signature = models.RiskAnalysisSignature(
             preliminary_risk_analysis=apr,
             signature_type=signature_type,
             signatory=user,
+            signatory_role=user.role,
             signature_date_time=datetime.now()
         )
         signature.save()
         data = {
             'signature': signature.signatory.full_name
         }
-        messages.success(request, 'APR assinada')
+        messages.success(request, 'APR assinada com sucesso.')
         return JsonResponse(data)
     data = {
         'errors': sign_form.errors
@@ -274,12 +282,20 @@ class APRDetailPDF(WeasyTemplateView):
         chemical_risks = apr.answers.filter(
             question__risk_question__category=models.RiskQuestion.CHEMICAL
         )
+        evaluation_signature = apr.signatures.filter(
+            signature_type=models.RiskAnalysisSignature.EVALUATOR
+        ).order_by('id').first()
+        responsible_signature = apr.signatures.filter(
+            signature_type=models.RiskAnalysisSignature.CONTRACT_RESPONSIBLE
+        ).order_by('id').first()
         context = self.get_context_data(**kwargs)
         context.update({
             'apr': apr,
             'accident_risks': accident_risks,
             'biological_risks': biological_risks,
             'physical_risks': physical_risks,
-            'chemical_risks': chemical_risks
+            'chemical_risks': chemical_risks,
+            'evaluation_signature': evaluation_signature,
+            'responsible_signature': responsible_signature,
         })
         return self.render_to_response(context)

@@ -3,23 +3,24 @@
 {% block content %}
   <div class="card mb-4">
     <div class="card-header pb-0">
-      <h6>Análises Preliminares de Risco</h6>
-      <a class="btn btn-primary" href="{% url 'core:apr_new' %}">Cadastrar APR</a>
+      <a class="btn btn-primary float-end" href="{% url 'core:apr_new' %}">Cadastrar APR</a>
+      <h6 class="text-center">Relação de Análises Preliminares de Risco Cadastradas</h6>
     </div>
     <div class="card-body px-0 pt-0 pb-2">
       
       <div class="table-responsive">
         <table class="table align-items-center mb-0">
           <thead>
-            <tr>
+            <tr class="text-center">
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipo de Atividade</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Data de criação</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ações</th>
             </tr>
           </thead>
           <tbody>
             {% for apr in apr_list.all %}
-              <tr>
+              <tr class="text-center">
                 <td>
                   <a href="{% url 'core:apr_detail' apr.id %}">{{ apr.activity_type }}</a>
                 </td>

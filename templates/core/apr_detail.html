@@ -4,7 +4,9 @@
   <div class="card mb-4">
     <div class="card-header pb-0">
       <a class="btn btn-primary float-end mx-2" href="{% url 'core:apr_detail_pdf' apr.id %}">Baixar PDF</a>  
+      {% if user_can_sign %}
       <button type="button" class="btn btn-block btn-default float-end mx-2" data-bs-toggle="modal" data-bs-target="#modal_sign_form">Assinar Documento</button>
+      {% endif %}
     </div>
     <div class="card-body px-0 pt-0 pb-2">
       {% include 'core/sign_form_modal.html' %}
@@ -176,7 +178,7 @@
               <td class="text-center text-bold" colspan="5">Informações de emergência</td>
             </tr>
             <tr>
-              <td colspan="5">1ª Preencher nome e telefone do responsável da empresa contratada no canteiro de trabalho:</td>
+              <td colspan="5">1ª Nome e telefone do responsável da empresa contratada no canteiro de trabalho: {{ apr.company_responsible_name }} - {{ apr.company_responsible_phone }}</td>
             </tr>
             <tr>
               <td colspan="5">2ª Hospital Público - Santa Casa de Misericórdia de Santo Amaro. Rua Isabel Schimidt, 59, Santo Amaro, fone: 11 5687-4322</td>
@@ -227,20 +229,30 @@
             <tr>
               <td colspan="5">8) Treinamento de capacitação relacionado a atividade</td>
             </tr>
-            <tr class="table-dark"><td colspan="5"></td></tr>
-            <tr>
-              <td class="text-center text-bold" colspan="5">Validação</td>
-            </tr>
-            <tr>
-              <td colspan="5">
-                Avaliação realizada por: {{ evaluation_signature.signatory.full_name }} - 
-                Cargo: {{ evaluation_signature.signatory.get_role_display }} - 
-                Assinado em: {{ evaluation_signature.signature_date_time|date:"SHORT_DATETIME_FORMAT"  }}
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5">Responsável pela contratação:</td>
-            </tr>
+            {% if evaluation_signature or responsible_signature %}
+              <tr class="table-dark"><td colspan="5"></td></tr>
+              <tr>
+                <td class="text-center text-bold" colspan="5">Validação</td>
+              </tr>
+              {% if evaluation_signature %}
+                <tr>
+                  <td colspan="5">
+                    Avaliação realizada por: {{ evaluation_signature.signatory.full_name }} - 
+                    Cargo: {{ evaluation_signature.signatory.get_role_display }} - 
+                    Assinado de forma digital em: {{ evaluation_signature.signature_date_time|date:"SHORT_DATETIME_FORMAT"  }}
+                  </td>
+                </tr>
+              {% endif %}
+              {% if responsible_signature %}
+                <tr>
+                  <td colspan="5">
+                    Responsável pela contratação: {{ responsible_signature.signatory.full_name }} -
+                    Cargo: {{ responsible_signature.signatory.get_role_display }} - 
+                    Assinado de forma digital em: {{ responsible_signature.signature_date_time|date:"d/m/Y-H:i:s"  }}
+                  </td>
+                </tr>
+              {% endif%}
+            {% endif %}
           </tbody>
         </table>
       </div>

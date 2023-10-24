@@ -47,7 +47,7 @@
         <nav class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow mt-4 py-2 start-0 end-0 mx-4">
           <div class="container-fluid">
             <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 " href="{% url 'core:home' %}">
-              DigiTS {% if request.user.selected_company %}- {{ request.user.selected_company.name }}{% endif %}
+              DigiTS - Controle Digital de Documentação Técnica
             </a>
             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon mt-2">
@@ -83,12 +83,26 @@
                     <i class="ni ni-settings opacity-6 text-dark me-1"></i>
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                      {% comment %} <li>
-                        <a class="dropdown-item" href="../pages/profile.html">
-                          <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                          Perfil
-                        </a>
-                      </li> {% endcomment %}
+                      {% if request.user.selected_company %}
+                        <li>
+                            <span class="dropdown-item">
+                            <i class="fa fa-user opacity-6 text-dark me-1"></i>
+                            Empresa: {{ request.user.selected_company.name }}
+                            </span>
+                        </li>
+                      {% endif %}
+                      <li>
+                        <span class="dropdown-item">
+                        <i class="fa fa-user opacity-6 text-dark me-1"></i>
+                        Usuário: {{ request.user.full_name }}
+                        </span>
+                      </li>
+                      <li>
+                        <span class="dropdown-item">
+                        <i class="fa fa-user opacity-6 text-dark me-1"></i>
+                        Cargo: {{ request.user.get_role_display }}
+                        </span>
+                      </li>
                       <li>
                         <a class="dropdown-item" href="{% url 'logout' %}">
                           <i class="fas fa-door-open opacity-6 text-dark me-1"></i>
@@ -106,7 +120,7 @@
   </div>
   <main class="main-content  mt-0">
     <section>
-      <div class="page-header min-vh-100">
+      <div class="page-header min-vh-50">
         <div class="container-fluid py-4">
           {% block content %}
           {% endblock content %}
