@@ -80,7 +80,7 @@ class PreliminaryRiskAnalysis(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         verbose_name='Criado por', related_name='created_risk_analysis'
     )
-    last_update = models.DateTimeField('Última atualização', auto_now_add=True)
+    last_update = models.DateTimeField('Última atualização', auto_now=True)
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         verbose_name='Atualizado por', related_name='updated_risk_analysis'

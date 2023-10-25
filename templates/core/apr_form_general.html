@@ -67,6 +67,7 @@
                 {% for question in accident_formset %}
                   <tr>
                     <td>
+                      {{ question.id }}
                       {{ question.question.label }}
                     </td>
                     <td>
@@ -102,6 +103,7 @@
                 {% for question in biological_formset %}
                   <tr>
                     <td>
+                      {{ question.id }}
                       {{ question.question.label }}
                     </td>
                     <td>
@@ -137,6 +139,7 @@
                 {% for question in physical_formset %}
                   <tr>
                     <td>
+                      {{ question.id }}
                       {{ question.question.label }}
                     </td>
                     <td>
@@ -172,6 +175,7 @@
                 {% for question in chemical_formset %}
                   <tr>
                     <td>
+                      {{ question.id }}
                       {{ question.question.label }}
                     </td>
                     <td>

@@ -10,7 +10,7 @@
     </div>
     <br><br>
     <div class="card-body px-0 pt-0 pb-2">
-      
+      {% include 'core/confirm_delete_modal.html' %}
       <div class="table-responsive">
         <table class="table align-items-center mb-0">
           <thead>
@@ -40,10 +40,13 @@
                   <a class="btn btn-tooltip" href="{% url 'core:apr_detail_pdf' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Baixar PDF" data-container="body" data-animation="true">
                     <i class="fas fa-file-pdf opacity-6 text-dark me-1"></i>
                   </a>
-                  {% if apr.status == 'CAD' %}
-                    <a class="btn btn-tooltip" href="{% url 'core:apr_delete' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir APR" data-container="body" data-animation="true">
-                      <i class="fas fa-trash opacity-6 text-dark me-1"></i>
+                  {% if apr.status == 'CAD' and user_can_create_edit %}
+                    <a class="btn btn-tooltip" href="{% url 'core:apr_edit' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Alterar APR" data-container="body" data-animation="true">
+                      <i class="fa fa-pencil opacity-6 text-dark me-1"></i>
                     </a>
+                    <button onclick="getId(this);" type="btn btn-tooltip" class="btn btn-tooltip" data-bs-toggle="modal" data-bs-target="#modal_confirm_delete" data-id="{{ apr.id }}">
+                      <i class="fas fa-trash opacity-6 text-dark me-1" data-bs-toggle="tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir APR" data-container="body" data-animation="true"></i>
+                    </button>
                   {% endif %}
                 </td>
               </tr>
@@ -54,3 +57,12 @@
     </div>
   </div>
 {% endblock content %}
+{% block extrascript %}
+<script>
+  function getId(clickedElement) {
+    var dataid = $(clickedElement).attr('data-id');
+    var url = "{% url 'core:apr_delete' 9999 %}".replace('9999', dataid);
+    $('#id_confirm_delete').attr('href', url);
+  }
+</script>
+{% endblock extrascript %}

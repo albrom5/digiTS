@@ -27,7 +27,7 @@ def apr_list(request):
     company = user.selected_company
     aprs = models.PreliminaryRiskAnalysis.objects.filter(
         company=company
-    )
+    ).order_by('-created_by', '-id')
     create_edit_roles = [models.User.ENGINEER, models.User.TECHNICIAN]
 
     context = {
@@ -62,7 +62,7 @@ def apr_new(request):
     )
 
     physical_risk_questions = models.DefaultRiskQuestion.objects.filter(
-        default_risk_analysis__id=1, 
+        default_risk_analysis__id=1,
         risk_question__category=models.RiskQuestion.PHYSICAL
     )
     PhysicalQuestionsFormSet = inlineformset_factory(
@@ -222,6 +222,196 @@ def apr_detail(request, pk):
 
 
 @login_required
+def apr_edit(request, pk):
+    apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
+
+    if apr.status != models.PreliminaryRiskAnalysis.REGISTERING:
+        messages.error(request, 'Status da APR não permite edição!')
+        return redirect('core:apr_list')
+
+    AccidentQuestionsFormSet = inlineformset_factory(
+        models.PreliminaryRiskAnalysis, models.RiskAnswer,
+        form=forms.RiskAnswerForm,
+        extra=0,
+        can_delete=False
+    )
+    BiologicalQuestionsFormSet = inlineformset_factory(
+        models.PreliminaryRiskAnalysis, models.RiskAnswer,
+        form=forms.RiskAnswerForm,
+        extra=0,
+        can_delete=False
+    )
+    PhysicalQuestionsFormSet = inlineformset_factory(
+        models.PreliminaryRiskAnalysis, models.RiskAnswer,
+        form=forms.RiskAnswerForm,
+        extra=0,
+        can_delete=False
+    )
+    ChemicalQuestionsFormSet = inlineformset_factory(
+        models.PreliminaryRiskAnalysis, models.RiskAnswer,
+        form=forms.RiskAnswerForm,
+        extra=0,
+        can_delete=False
+    )
+
+    if request.method == 'POST':
+        form = forms.RiskAnalysisForm(
+            request.POST, instance=apr
+        )
+        accident_questions_formset = AccidentQuestionsFormSet(
+            request.POST,
+            instance=apr,
+            prefix='accident',
+        )
+        filtered_accident_form_list = [
+            form
+            for form in accident_questions_formset.forms
+            if form.instance.id is not None
+            and form.instance.question.risk_question.category == models.RiskQuestion.ACCIDENT
+        ]
+        accident_questions_formset.forms = filtered_accident_form_list
+
+        biological_questions_formset = BiologicalQuestionsFormSet(
+            request.POST,
+            instance=apr,
+            prefix='biological',
+        )
+        filtered_biological_form_list = [
+            form
+            for form in biological_questions_formset.forms
+            if form.instance.id is not None
+            and form.instance.question.risk_question.category == models.RiskQuestion.BIOLOGICAL
+        ]
+        biological_questions_formset.forms = filtered_biological_form_list
+
+        physical_questions_formset = PhysicalQuestionsFormSet(
+            request.POST,
+            instance=apr,
+            prefix='physical',
+        )
+        filtered_physical_form_list = [
+            form
+            for form in physical_questions_formset.forms
+            if form.instance.id is not None
+            and form.instance.question.risk_question.category == models.RiskQuestion.PHYSICAL
+        ]
+        physical_questions_formset.forms = filtered_physical_form_list
+
+        chemical_questions_formset = ChemicalQuestionsFormSet(
+            request.POST,
+            instance=apr,
+            prefix='chemical',
+        )
+        filtered_chemical_form_list = [
+            form
+            for form in chemical_questions_formset.forms
+            if form.instance.id is not None
+            and form.instance.question.risk_question.category == models.RiskQuestion.CHEMICAL
+        ]
+        chemical_questions_formset.forms = filtered_chemical_form_list
+        try:
+            with transaction.atomic():
+                if form.is_valid():
+                    valid = True
+                    apr = form.save(commit=False)
+                    apr.updated_by = request.user
+                    apr.save()
+
+                    if accident_questions_formset.is_valid():
+                        accident_questions_formset.save()
+                    else:
+                        valid = False
+
+                    biological_questions_formset.instance = apr
+                    if biological_questions_formset.is_valid():
+                        biological_questions_formset.save()
+                    else:
+                        valid = False
+
+                    physical_questions_formset.instance = apr
+                    if physical_questions_formset.is_valid():
+                        physical_questions_formset.save()
+                    else:
+                        valid = False
+
+                    chemical_questions_formset.instance = apr
+                    if chemical_questions_formset.is_valid():
+                        chemical_questions_formset.save()
+                    else:
+                        valid = False
+
+                    if not valid:
+                        raise ValidationError('')
+                    return redirect('core:apr_list')
+        except (IntegrityError, ValidationError) as e:
+            print(e)
+            context = {
+                'form': form,
+                'accident_formset': accident_questions_formset,
+                'biological_formset': biological_questions_formset,
+                'physical_formset': physical_questions_formset,
+                'chemical_formset': chemical_questions_formset,
+            }
+            return render(request, 'core/apr_form_general.html', context)
+
+    form = forms.RiskAnalysisForm(
+        instance=apr
+    )
+    accident_questions_formset = AccidentQuestionsFormSet(
+        instance=apr,
+        prefix='accident'
+    )
+    filtered_accident_form_list = [
+        form
+        for form in accident_questions_formset.forms
+        if form.instance.question.risk_question.category == models.RiskQuestion.ACCIDENT
+    ]
+    accident_questions_formset.forms = filtered_accident_form_list
+
+    biological_questions_formset = BiologicalQuestionsFormSet(
+        instance=apr,
+        prefix='biological'
+    )
+    filtered_biological_form_list = [
+        form
+        for form in biological_questions_formset.forms
+        if form.instance.question.risk_question.category == models.RiskQuestion.BIOLOGICAL
+    ]
+    biological_questions_formset.forms = filtered_biological_form_list
+
+    physical_questions_formset = PhysicalQuestionsFormSet(
+        instance=apr,
+        prefix='physical'
+    )
+    filtered_physical_form_list = [
+        form
+        for form in physical_questions_formset.forms
+        if form.instance.question.risk_question.category == models.RiskQuestion.PHYSICAL
+    ]
+    physical_questions_formset.forms = filtered_physical_form_list
+
+    chemical_questions_formset = ChemicalQuestionsFormSet(
+        instance=apr,
+        prefix='chemical'
+    )
+    filtered_chemical_form_list = [
+        form
+        for form in chemical_questions_formset.forms
+        if form.instance.question.risk_question.category == models.RiskQuestion.CHEMICAL
+    ]
+    chemical_questions_formset.forms = filtered_chemical_form_list
+
+    context = {
+        'form': form,
+        'accident_formset': accident_questions_formset,
+        'biological_formset': biological_questions_formset,
+        'physical_formset': physical_questions_formset,
+        'chemical_formset': chemical_questions_formset,
+    }
+    return render(request, 'core/apr_form_general.html', context)
+
+
+@login_required
 def apr_sign(request, pk):
     user = request.user
     company = user.selected_company
@@ -282,7 +472,7 @@ class APRDetailPDF(WeasyTemplateView):
     # ]
     template_name = 'core/apr_detail_pdf.html'
     pdf_attachment = True
-    pdf_filename = 'apr.pdf'
+    pdf_filename = 'APR.pdf'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')

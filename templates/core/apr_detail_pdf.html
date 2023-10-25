@@ -6,20 +6,11 @@
   <link id="pagestyle" href="{% static 'assets/css/argon-dashboard.css' %}?v=2.0.4" rel="stylesheet" />
   <!-- PDF files sheet -->
   <link rel="stylesheet" href="{% static 'assets/css/pdf_files.css' %}">
-  <style>
-    @page {
-      size: A4 portrait;
-
-      @bottom-right {
-        content: "Página "counter(page) " de "counter(pages);
-        font-size: 8pt;
-        font-family: 'Calibri';
-      }
-    }
-  </style>
+  <style>@page { size: A4 }</style>
 </head>
 
-<body>
+<body class="A4">
+  <section class="sheet padding-10mm">
   <div class="content">
     <div class="row clearfix">
       <div class="card mb-4">
@@ -48,15 +39,15 @@
                 </tr>
                 <tr class="table-dark"><td colspan="5"></td></tr>
                 <tr class="text-center text-bold">
-                  <td style="width: 15%;">Riscos de Acidentes</td>
-                  <td class="text-center" style="width: 5%;">Sim</td>
-                  <td class="text-center" style="width: 5%;">Não</td>
-                  <td style="width: 35%;">Qual(is)</td>
-                  <td style="width: 40%;">Forma(s) de controle</td>
+                  <td>Riscos de Acidentes</td>
+                  <td class="text-center">Sim</td>
+                  <td class="text-center">Não</td>
+                  <td>Qual(is)</td>
+                  <td>Forma(s) de controle</td>
                 </tr>
                 {% for risk in accident_risks.all %}
                   <tr>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.question }}
                     </td>
                     {% if risk.exists %} 
@@ -64,10 +55,10 @@
                     {% else %}
                       <td class="text-center"></td><td class="text-center">X</td>
                     {% endif %}
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.details }}
                     </td>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.form_of_control }}
                     </td>
                   </tr>
@@ -82,7 +73,7 @@
                 </tr>
                 {% for risk in biological_risks.all %}
                   <tr>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.question }}
                     </td>
                     {% if risk.exists %} 
@@ -90,10 +81,10 @@
                     {% else %}
                       <td class="text-center"></td><td class="text-center">X</td>
                     {% endif %}
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.details }}
                     </td>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.form_of_control }}
                     </td>
                   </tr>
@@ -108,7 +99,7 @@
                 </tr>
                 {% for risk in physical_risks.all %}
                   <tr>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.question }}
                     </td>
                     {% if risk.exists %} 
@@ -116,10 +107,10 @@
                     {% else %}
                       <td class="text-center"></td><td class="text-center">X</td>
                     {% endif %}
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.details }}
                     </td>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.form_of_control }}
                     </td>
                   </tr>
@@ -134,7 +125,7 @@
                 </tr>
                 {% for risk in chemical_risks.all %}
                   <tr>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.question }}
                     </td>
                     {% if risk.exists %} 
@@ -142,10 +133,10 @@
                     {% else %}
                       <td class="text-center"></td><td class="text-center">X</td>
                     {% endif %}
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.details }}
                     </td>
-                    <td>
+                    <td style="max-width: 350px; text-wrap:wrap;">
                       {{ risk.form_of_control }}
                     </td>
                   </tr>
@@ -274,4 +265,5 @@
       </div>
     </div>
   </div>
+</section>
 </body>

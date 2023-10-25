@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+<div class="modal fade" id="modal_confirm_delete" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <div class="card card-plain">
+          <div class="card-header pb-0 text-left">
+            <p class="mb-0" >Tem certeza que deseja excluir a APR?</p>
+          </div>
+          <div class="card-body">
+            <div class="text-center">
+              <a id="id_confirm_delete" href="" class="btn bg-gradient-danger">Excluir</a>
+              <button type="button" class="btn btn-default" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
