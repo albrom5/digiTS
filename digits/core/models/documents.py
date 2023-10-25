@@ -64,11 +64,13 @@ class PreliminaryRiskAnalysis(models.Model):
     READY = 'PRT'
     EFFECTIVE = 'VIG'
     CANCELLED = 'CAN'
+    SIGNED = 'ASS'
     STATUS = (
         (REGISTERING, 'Em cadastro'),
         (READY, 'Pronta para assinatura'),
         (EFFECTIVE, 'Vigente'),
-        (CANCELLED, 'Cancelada')
+        (CANCELLED, 'Cancelada'),
+        (SIGNED, 'Assinada')
     )
     company = models.ForeignKey(
         'core.Company', on_delete=models.CASCADE, verbose_name='Empresa'

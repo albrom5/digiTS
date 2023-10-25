@@ -25,6 +25,7 @@
   <title>
     DigiTS - Controle Digital de Documentação Técnica
   </title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
@@ -35,7 +36,6 @@
   <link href="{% static 'assets/css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'assets/css/argon-dashboard.css' %}?v=2.0.4" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 </head>
 
 <body class="bg-gray-100">
@@ -80,35 +80,43 @@
                 </li> {% endcomment %}
                 <div class="dropdown">
                   <a href="#" class="btn bg-gradient dropdown-toggle " data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
-                    <i class="ni ni-settings opacity-6 text-dark me-1"></i>
+                    <i class="fa fa-cog opacity-6 text-dark me-1"></i>
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                      {% if request.user.selected_company %}
-                        <li>
-                            <span class="dropdown-item">
-                            <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                            Empresa: {{ request.user.selected_company.name }}
-                            </span>
-                        </li>
-                      {% endif %}
+                    {% if request.user.selected_company %}
                       <li>
                         <span class="dropdown-item">
-                        <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                        Usuário: {{ request.user.full_name }}
+                        <i class="fa fa-building opacity-6 text-dark me-1"></i>
+                        Empresa: {{ request.user.selected_company.name }}
                         </span>
                       </li>
+                    {% endif %}
+                    <li>
+                      <span class="dropdown-item">
+                      <i class="fa fa-user opacity-6 text-dark me-1"></i>
+                      Usuário: {{ request.user.full_name }}
+                      </span>
+                    </li>
+                    <li>
+                      <span class="dropdown-item">
+                      <i class="fas fa-id-badge opacity-6 text-dark me-1"></i>
+                      Cargo: {{ request.user.get_role_display }}
+                      </span>
+                    </li>
+                    {% if request.user.is_superuser %}
                       <li>
-                        <span class="dropdown-item">
-                        <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                        Cargo: {{ request.user.get_role_display }}
-                        </span>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="{% url 'logout' %}">
-                          <i class="fas fa-door-open opacity-6 text-dark me-1"></i>
-                          Encerrar sessão
+                        <a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">
+                          <i class="ni ni-settings opacity-6 text-dark me-1"></i>
+                          Painel de Administração
                         </a>
                       </li>
+                    {% endif %}
+                    <li>
+                      <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="ni ni-button-power opacity-6 text-dark me-1"></i>
+                        Encerrar sessão
+                      </a>
+                    </li>
                   </ul>
                 </div>
             </div>
@@ -129,10 +137,17 @@
     </section>
   </main>
   <!--   Core JS Files   -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
   <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
   <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
   <script src="{% static 'assets/js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'assets/js/plugins/smooth-scrollbar.min.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+      $('[data-bs-toggle="tooltip"]').tooltip(); 
+  });
+  </script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -146,8 +161,6 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'assets/js/argon-dashboard.min.js' %}?v=2.0.4"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
   <script>
     // JQuery-Confirm for success/failure messages
     // {% if messages %}

@@ -3,9 +3,12 @@
 {% block content %}
   <div class="card mb-4">
     <div class="card-header pb-0">
-      <a class="btn btn-primary float-end" href="{% url 'core:apr_new' %}">Cadastrar APR</a>
-      <h6 class="text-center">Relação de Análises Preliminares de Risco Cadastradas</h6>
+      {% if user_can_create_edit %}
+        <a class="btn btn-primary float-end" href="{% url 'core:apr_new' %}">Cadastrar APR</a>
+      {% endif %}
+      <h3 class="text-center text-bold">Relação de Análises Preliminares de Risco Cadastradas</h3>
     </div>
+    <br><br>
     <div class="card-body px-0 pt-0 pb-2">
       
       <div class="table-responsive">
@@ -29,6 +32,19 @@
                 </td>
                 <td>
                   {{ apr.get_status_display }}
+                </td>
+                <td>
+                  <a class="btn btn-tooltip" href="{% url 'core:apr_detail' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Visualizar APR" data-container="body" data-animation="true">
+                    <i class="fas fa-search opacity-6 text-dark me-1"></i>
+                  </a>
+                  <a class="btn btn-tooltip" href="{% url 'core:apr_detail_pdf' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Baixar PDF" data-container="body" data-animation="true">
+                    <i class="fas fa-file-pdf opacity-6 text-dark me-1"></i>
+                  </a>
+                  {% if apr.status == 'CAD' %}
+                    <a class="btn btn-tooltip" href="{% url 'core:apr_delete' apr.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir APR" data-container="body" data-animation="true">
+                      <i class="fas fa-trash opacity-6 text-dark me-1"></i>
+                    </a>
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}

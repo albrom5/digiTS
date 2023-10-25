@@ -28,8 +28,11 @@ def apr_list(request):
     aprs = models.PreliminaryRiskAnalysis.objects.filter(
         company=company
     )
+    create_edit_roles = [models.User.ENGINEER, models.User.TECHNICIAN]
+
     context = {
-        'apr_list': aprs
+        'apr_list': aprs,
+        'user_can_create_edit': user.role in create_edit_roles,
     }
     return render(request, 'core/apr_list.html', context)
 
@@ -249,12 +252,26 @@ def apr_sign(request, pk):
         data = {
             'signature': signature.signatory.full_name
         }
+        apr.status = models.PreliminaryRiskAnalysis.SIGNED
+        apr.save()
         messages.success(request, 'APR assinada com sucesso.')
         return JsonResponse(data)
     data = {
         'errors': sign_form.errors
     }
     return JsonResponse(data)
+
+
+@login_required
+def apr_delete(request, pk):
+    apr = get_object_or_404(models.PreliminaryRiskAnalysis, pk=pk)
+
+    if apr.status != models.PreliminaryRiskAnalysis.REGISTERING:
+        messages.error(request, 'Status da APR não permite exclusão!')
+        return redirect('core:apr_list')
+    apr.delete()
+    messages.success(request, 'APR excluída com sucesso.')
+    return redirect('core:apr_list')
 
 
 @method_decorator(login_required, name='dispatch')

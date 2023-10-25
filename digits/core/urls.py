@@ -17,4 +17,5 @@ urlpatterns = [
     path('apr/<int:pk>', views.apr_detail, name='apr_detail'),
     path('apr/<int:pk>/pdf/', views.APRDetailPDF.as_view(), name='apr_detail_pdf'),
     path('apr/<int:pk>/sign/', views.apr_sign, name='apr_sign'),
+    path('apr/<int:pk>/delete/', views.apr_delete, name='apr_delete'),
 ]

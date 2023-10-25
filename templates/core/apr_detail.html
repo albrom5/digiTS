@@ -239,7 +239,7 @@
                   <td colspan="5">
                     Avaliação realizada por: {{ evaluation_signature.signatory.full_name }} - 
                     Cargo: {{ evaluation_signature.signatory.get_role_display }} - 
-                    Assinado de forma digital em: {{ evaluation_signature.signature_date_time|date:"SHORT_DATETIME_FORMAT"  }}
+                    Assinado de forma digital em: {{ evaluation_signature.signature_date_time|date:"d/m/Y-H:i:s"  }}
                   </td>
                 </tr>
               {% endif %}
