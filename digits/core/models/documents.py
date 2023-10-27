@@ -72,6 +72,8 @@ class PreliminaryRiskAnalysis(models.Model):
         (CANCELLED, 'Cancelada'),
         (SIGNED, 'Assinada')
     )
+    order = models.PositiveSmallIntegerField('Ordem', null=True, blank=True)
+    code = models.CharField('Código', max_length=20, blank=True)
     company = models.ForeignKey(
         'core.Company', on_delete=models.CASCADE, verbose_name='Empresa'
     )
@@ -106,6 +108,21 @@ class PreliminaryRiskAnalysis(models.Model):
         max_length=20, blank=True
     )
 
+    def check_order(self):
+        order_exists = PreliminaryRiskAnalysis.objects.filter(
+            order=self.order
+        ).exists()
+        if order_exists:
+            self.get_order()
+
+    def get_order(self):
+        aprs = PreliminaryRiskAnalysis.objects.all().order_by('order', 'id')
+        self.order = 1
+        if aprs.last().order is not None:
+            self.order = aprs.last().order + 1
+
+        self.check_order()
+
     def user_can_sign(self, user):
         from digits.core.models.user import User
         allowed_roles = [
@@ -129,6 +146,19 @@ class PreliminaryRiskAnalysis(models.Model):
             return (False, error_message)
 
         return (True, 'OK')
+
+    def get_code(self):
+        if self.order is None:
+            self.code = ''
+        str_order = f'{self.order}'.zfill(6)
+        self.code = f'APR-{str_order}'
+
+    def save(self, *args, **kwargs):
+        if self.order is None:
+            self.get_order()
+        if self.code is None or self.code == '':
+            self.get_code()
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         title = (

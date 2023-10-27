@@ -27,7 +27,7 @@ def apr_list(request):
     company = user.selected_company
     aprs = models.PreliminaryRiskAnalysis.objects.filter(
         company=company
-    ).order_by('-created_by', '-id')
+    ).order_by('-order', '-created_by', '-id')
     create_edit_roles = [models.User.ENGINEER, models.User.TECHNICIAN]
 
     context = {

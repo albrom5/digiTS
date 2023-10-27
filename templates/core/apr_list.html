@@ -15,6 +15,7 @@
         <table class="table align-items-center mb-0">
           <thead>
             <tr class="text-center">
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipo de Atividade</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Data de criação</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
@@ -25,7 +26,10 @@
             {% for apr in apr_list.all %}
               <tr class="text-center">
                 <td>
-                  <a href="{% url 'core:apr_detail' apr.id %}">{{ apr.activity_type }}</a>
+                  <a href="{% url 'core:apr_detail' apr.id %}">{{ apr.code }}</a>
+                </td>
+                <td>
+                  {{ apr.activity_type }}
                 </td>
                 <td>
                   {{ apr.create_date|date:"SHORT_DATE_FORMAT" }}
