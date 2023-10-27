@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -28,6 +29,12 @@ def apr_list(request):
     aprs = models.PreliminaryRiskAnalysis.objects.filter(
         company=company
     ).order_by('-order', '-created_by', '-id')
+    search = request.GET.get('search')
+    if search is not None:
+        aprs = aprs.filter(
+            Q(code__icontains=search)
+            | Q(activity_type__icontains=search)
+        )
     create_edit_roles = [models.User.ENGINEER, models.User.TECHNICIAN]
 
     context = {
